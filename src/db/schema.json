@@ -1,0 +1,40 @@
+{
+  "users": {
+    "id": "string",
+    "name": "string",
+    "age": "number",
+    "living_condition": "alone | with_family",
+    "income_level": "low | mid | high",
+    "chronic_diseases": ["hypertension", "diabetes", "cardiovascular", "periodontitis"],
+    "medications": [
+      {
+        "name": "string",
+        "dosage_time": "HH:mm"
+      }
+    ],
+    "persona_preference": "grandchild | doctor | friend",
+    "favorite_hospitals": [
+      {
+        "name": "string",
+        "department": "string",
+        "phone": "string"
+      }
+    ],
+    "dashboardPreferences": {
+      "mission1": { "icon": "string", "text": "string" },
+      "mission2": { "icon": "string", "text": "string" },
+      "hospital": { "name": "string", "phone": "string", "lastVisit": "string" }
+    }
+  },
+  "health_logs": {
+    "user_id": "string",
+    "timestamp": "ISO8601",
+    "environmental_data": {
+      "pm25": "number",
+      "pm10": "number",
+      "green_index": "number"
+    },
+    "risk_score": "number (0-100)",
+    "status": "green | yellow | red"
+  }
+}

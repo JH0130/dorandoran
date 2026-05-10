@@ -1,0 +1,130 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'GmarketSans';
+    font-weight: 300;
+    font-style: normal;
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff') format('woff');
+}
+@font-face {
+    font-family: 'GmarketSans';
+    font-weight: 500;
+    font-style: normal;
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+}
+@font-face {
+    font-family: 'GmarketSans';
+    font-weight: 700;
+    font-style: normal;
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff') format('woff');
+}
+
+@theme {
+  --font-sans: "GmarketSans", "Outfit", system-ui, sans-serif;
+  
+  --color-brand-focus: #fb7185; /* rose-400 */
+  --color-brand-break: #34d399; /* emerald-400 */
+  --color-brand-bg: #020617;    /* slate-950 */
+  
+  --color-gradient-start: #fb7185;
+  --color-gradient-end: #f43f5e;
+  --color-break-start: #34d399;
+  --color-break-end: #10b981;
+}
+
+:root {
+  /* Meta-inspired Color Tokens */
+  --color-primary: #0064e0;      /* Cobalt Blue */
+  --color-primary-deep: #0056c1; 
+  --color-canvas: #ffffff;       /* Canvas White */
+  --color-surface-soft: #f0f4f8; /* Softer, slightly blue-tinted Cloud for better depth */
+  --color-ink-deep: #1c1e21;     /* Deep Ink */
+  --color-ink: #4b4f56;
+  
+  /* Semantic Colors */
+  --color-success: #10b981; /* Emerald */
+  --color-warning: #f59e0b; /* Amber */
+  --color-critical: #ef4444; /* Red */
+
+  /* Gradients for Hero Section */
+  --gradient-safe: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  --gradient-caution: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  --gradient-danger: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+
+  /* Typography Hierarchy (Gmarket Sans) */
+  --font-hero: 64px;
+  --font-display: 48px;
+  --font-heading-lg: 36px;
+  --font-heading-md: 28px;
+  --font-heading-sm: 24px;
+  --font-body: 18px;
+  --font-button: 16px;
+
+  /* Shapes & Spacing */
+  --rounded-xxxl: 32px;
+  --rounded-xl: 16px;
+  --rounded-full: 9999px;
+  --spacing-base: 16px;
+  --spacing-xl: 24px;
+  --spacing-section: 64px;
+  
+  /* Shadows */
+  --shadow-floating: 0 20px 40px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.04);
+}
+
+body {
+  background-color: var(--color-surface-soft);
+  color: var(--color-ink-deep);
+  font-family: 'GmarketSans', system-ui, -apple-system, sans-serif;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Base Card Styles */
+.card-meta {
+  background: var(--color-canvas);
+  border-radius: var(--rounded-xxxl);
+  border: 1px solid rgba(255, 255, 255, 0.5); /* Subtle border for depth */
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.card-floating {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: var(--rounded-xxxl);
+  box-shadow: var(--shadow-floating);
+}
+
+.button-pill-primary {
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: var(--rounded-full);
+  padding: 14px 30px;
+  font-size: var(--font-button);
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button-pill-secondary {
+  background-color: transparent;
+  color: var(--color-ink-deep);
+  border: 2px solid var(--color-ink-deep);
+  border-radius: var(--rounded-full);
+  padding: 12px 28px;
+  font-size: var(--font-button);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}

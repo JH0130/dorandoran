@@ -1,0 +1,21 @@
+{
+  "short_name": "도란도란",
+  "name": "도란도란: 따뜻한 AI 건강 수호자",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0064E0",
+  "background_color": "#F8FAFC"
+}
