@@ -150,15 +150,16 @@ const HealthDashboard = ({ userData, environmentalData, activePersona = 'grandch
   useEffect(() => {
     if (prefsLockedRef.current) return;
     const m = buildPersonalizedMissions(dummyUser, effectiveEnv, status);
-    setUserSettings((prev) => ({
-      ...prev,
-      mission1: m.mission1,
-      mission2: m.mission2,
-      hospital: prev.hospital?.name ? prev.hospital : defaultHospital(userData),
-    }));
-    // personalizationKey에 점수·환경·프로필 요약이 포함됨
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- 키로만 재계산해 루프 방지
-  }, [personalizationKey]);
+    setUserSettings((prev) => {
+      if (prev.mission1.text === m.mission1.text && prev.mission2.text === m.mission2.text) return prev;
+      return {
+        ...prev,
+        mission1: m.mission1,
+        mission2: m.mission2,
+        hospital: prev.hospital?.name ? prev.hospital : defaultHospital(userData),
+      };
+    });
+  }, [personalizationKey, dummyUser, effectiveEnv, status, userData]);
 
   const briefingLines = useMemo(
     () =>
@@ -649,3 +650,52 @@ const HealthDashboard = ({ userData, environmentalData, activePersona = 'grandch
 };
 
 export default HealthDashboard;
+
+// HCI 개선: 응급 버튼 컴포넌트
+const EmergencyButton = () => {
+  const handleEmergency = () => {
+    if (window.navigator.vibrate) window.navigator.vibrate([200, 100, 200]);
+    import('../utils/aiService').then(({ speakText }) => {
+      speakText("위급 상황을 감지했습니다. 119에 연결합니다.");
+    });
+    setTimeout(() => {
+      window.location.href = 'tel:119';
+    }, 1500);
+  };
+
+  return (
+    <div style={{
+      position: 'fixed',
+      bottom: '20px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: '90%',
+      maxWidth: '400px',
+      zIndex: 2000
+    }}>
+      <button
+        onClick={handleEmergency}
+        style={{
+          width: '100%',
+          padding: '24px',
+          backgroundColor: '#FF0000',
+          color: '#FFFFFF',
+          fontSize: '28px',
+          fontWeight: '900',
+          borderRadius: '20px',
+          border: '5px solid #FFFF00',
+          boxShadow: '0 10px 30px rgba(255,0,0,0.5)',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '15px'
+        }}
+      >
+        <span style={{ fontSize: '40px' }}>🚨</span>
+        응급 버튼 (119)
+      </button>
+      <EmergencyButton />
+    </div>
+  );
+};
