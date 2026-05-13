@@ -109,3 +109,42 @@ export const startListening = (onResult, onError) => {
   recognition.start();
   return recognition;
 };
+
+// ============================================================
+// 🩺 의공학적 분석 서비스 (비정형 데이터 기반)
+// ============================================================
+
+/**
+ * 사용자의 대화 텍스트를 분석하여 정서 및 인지 상태 점수를 반환합니다.
+ * @param {string} text 분석할 대화 텍스트
+ * @returns {Promise<{depressionScore: number, cognitionScore: number, insights: string}>}
+ */
+export const analyzeUserStatus = async (text) => {
+  if (!genAI) return { depressionScore: 0, cognitionScore: 0, insights: '분석 불가' };
+
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const prompt = `
+    다음은 어르신의 대화 내용입니다: "${text}"
+    
+    이 내용을 바탕으로 다음 두 가지 항목을 0~100점 사이로 평가하고, 짧은 분석 의견을 주세요.
+    1. 우울감 지수 (높을수록 위험)
+    2. 인지 능력 저하 지수 (높을수록 위험)
+    
+    응답 형식: JSON { "depression": 점수, "cognition": 점수, "insights": "의견" }
+  `;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const jsonStr = response.text().replace(/```json|```/g, '').trim();
+    const data = JSON.parse(jsonStr);
+    return {
+      depressionScore: data.depression,
+      cognitionScore: data.cognition,
+      insights: data.insights
+    };
+  } catch (e) {
+    console.error('분석 오류:', e);
+    return { depressionScore: 0, cognitionScore: 0, insights: '분석 중 오류 발생' };
+  }
+};
