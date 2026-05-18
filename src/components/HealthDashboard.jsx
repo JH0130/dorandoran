@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { Phone, Settings, X, MapPin, RefreshCw } from 'lucide-react';
+import { Phone, Settings, X, MapPin, RefreshCw, BookOpen, ListTodo } from 'lucide-react';
 import { calculateHealthRiskScore } from '../utils/healthScore';
 import { dailyCheckIn } from '../utils/personaScripts';
 import { resolveUserCoordinates, fetchEnvironmentSnapshot } from '../utils/environmentService';
@@ -10,6 +10,9 @@ import {
 } from '../utils/personalization';
 import { loadDashboardPreferences, saveDashboardPreferences } from '../utils/localProfileStorage';
 import { useMorningReminder, useMorningReminderUi } from '../hooks/useMorningReminder';
+import ChatWithPersona from './ChatWithPersona';
+import HealthRecordsPanel from './HealthRecordsPanel';
+import MissionPanel from './MissionPanel';
 
 function defaultHospital(userData) {
   const f = userData?.favorite_hospitals?.[0];
@@ -32,6 +35,8 @@ const HealthDashboard = ({ userData, environmentalData, activePersona = 'grandch
   const [waterDrank, setWaterDrank] = useState(false);
   const [showChatModal, setShowChatModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showHealthRecords, setShowHealthRecords] = useState(false);
+  const [showMissions, setShowMissions] = useState(false);
 
   const prefsLockedRef = useRef(
     (() => {
@@ -156,8 +161,6 @@ const HealthDashboard = ({ userData, environmentalData, activePersona = 'grandch
       mission2: m.mission2,
       hospital: prev.hospital?.name ? prev.hospital : defaultHospital(userData),
     }));
-    // personalizationKey에 점수·환경·프로필 요약이 포함됨
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- 키로만 재계산해 루프 방지
   }, [personalizationKey]);
 
   const briefingLines = useMemo(
@@ -345,7 +348,23 @@ const HealthDashboard = ({ userData, environmentalData, activePersona = 'grandch
       <div style={{ maxWidth: '400px', margin: '0 auto', padding: '22px 20px 0' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
           <h3 style={{ fontSize: 'var(--font-heading-sm)', fontWeight: 700, margin: 0 }}>오늘의 미션</h3>
-          <span style={{ fontSize: '12px', color: 'var(--color-ink)' }}>맞춤 제안</span>
+          <button
+            type="button"
+            onClick={() => setShowMissions(true)}
+            style={{
+              fontSize: '12px',
+              color: 'var(--color-primary)',
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+            }}
+          >
+            <ListTodo size={14} /> 편집
+          </button>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '22px' }}>
@@ -468,6 +487,27 @@ const HealthDashboard = ({ userData, environmentalData, activePersona = 'grandch
             {activeDetails.buttonText}
           </button>
 
+          <button
+            type="button"
+            onClick={() => setShowHealthRecords(true)}
+            style={{
+              padding: '14px',
+              fontSize: '15px',
+              fontWeight: 700,
+              borderRadius: 'var(--rounded-full)',
+              backgroundColor: 'white',
+              color: 'var(--color-primary)',
+              border: '2px solid var(--color-primary)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+            }}
+          >
+            <BookOpen size={18} /> 건강 기록
+          </button>
+
           <div className="card-meta" style={{ padding: '18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
             <div style={{ minWidth: 0 }}>
               <div style={{ fontWeight: 800, fontSize: '16px' }}>{userSettings.hospital.name}</div>
@@ -498,45 +538,22 @@ const HealthDashboard = ({ userData, environmentalData, activePersona = 'grandch
         </div>
       </div>
 
+      {/* 대화 모달 */}
       {showChatModal && (
-        <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.6)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000,
-            padding: '20px',
-          }}
-        >
-          <div className="card-floating" style={{ width: '100%', maxWidth: '360px', padding: '28px', textAlign: 'center' }}>
-            <div style={{ fontSize: '44px', marginBottom: '12px' }}>{activeDetails.icon}</div>
-            <h2 style={{ fontSize: 'var(--font-heading-md)', fontWeight: 800, marginBottom: '12px' }}>{activeDetails.title}</h2>
-            <p style={{ fontSize: 'var(--font-body)', lineHeight: 1.65, marginBottom: '26px' }}>
-              {dailyCheckIn[activePersona] ? dailyCheckIn[activePersona](totalScore, status) : '안녕하세요!'}
-            </p>
-            <button
-              type="button"
-              onClick={() => setShowChatModal(false)}
-              style={{
-                width: '100%',
-                padding: '14px',
-                fontSize: '16px',
-                fontWeight: 800,
-                borderRadius: 'var(--rounded-full)',
-                border: '1px solid var(--color-ink)',
-                backgroundColor: 'white',
-                cursor: 'pointer',
-              }}
-            >
-              대화 마치기
-            </button>
-          </div>
-        </div>
+        <ChatWithPersona
+          persona={activePersona}
+          userData={userProfile || dummyUser}
+          onClose={() => setShowChatModal(false)}
+        />
       )}
 
+      {/* 건강 기록 패널 */}
+      <HealthRecordsPanel isOpen={showHealthRecords} onClose={() => setShowHealthRecords(false)} />
+
+      {/* 미션 패널 */}
+      <MissionPanel isOpen={showMissions} onClose={() => setShowMissions(false)} />
+
+      {/* 설정 모달 */}
       {showSettingsModal && (
         <div
           style={{
